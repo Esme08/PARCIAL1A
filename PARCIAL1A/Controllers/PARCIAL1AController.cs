@@ -318,5 +318,62 @@ namespace PARCIAL1A.Controllers
             }
         }
 
+
+        // Método para buscar Libros al ingresar el nombre del autor:
+
+        [HttpGet]
+        [Route("GetLibrobyAutor/{AutorNombre}")]
+
+        public IActionResult GetLibrobyAutor(string AutorNombre)
+        {
+            var listadoLibro =
+                (
+                from l in _PARCIAL1AContexto.Libros
+                join AL in _PARCIAL1AContexto.AutorLibro
+                    on l.Id equals AL.LibroId
+                join A in _PARCIAL1AContexto.Autores
+                    on AL.AutorId equals A.Id
+                where A.Nombre.Contains(AutorNombre)
+                select new
+                {
+                    A.Nombre,
+                    l.Titulo,
+                    AL.Orden
+                }).ToList();
+            if (listadoLibro.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(listadoLibro);
+        }
+
+        // Método para listar los ultimo 20 Post al ingresar el nombre de un autor.
+
+        [HttpGet]
+        [Route("GetPostbyAutor/{AutorNombre}")]
+
+        public IActionResult GetPostbyAutor(string AutorNombre)
+        {
+            var listadopost =
+                (
+                from p in _PARCIAL1AContexto.Posts
+                join A in _PARCIAL1AContexto.Autores
+                    on p.AutorId equals A.Id
+                where A.Nombre.Contains(AutorNombre)
+                select new
+                {
+                  p.Id,
+                  p.Titulo,
+                  p.Contenido,
+                  p.FechaPublicacion,
+                  A.Nombre
+                }).Take(20).ToList();
+            if (listadopost.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(listadopost);
+        }
+
     }
 }
