@@ -87,7 +87,6 @@ namespace PARCIAL1A.Controllers
 
         }
 
-<<<<<<< HEAD
         //Métodos para crear registros
 
         [HttpPost]
@@ -321,32 +320,39 @@ namespace PARCIAL1A.Controllers
 
         //Metodos para borrar
         [HttpDelete]
-        [Route("eliminar/{id}")]
+        [Route("EliminarLibro/{Id}")]
 
         public IActionResult EliminarLibro(int Id)
         {
+            try
+            {
 
-            //Para actualizar un registro, se obtiene el registro original de la BD
-            //al cual eliminaremos
+                //Para actualizar un registro, se obtiene el registro original de la BD
+                //al cual eliminaremos
 
-            Libros? Libro = (from l in _PARCIAL1AContexto.Libros
-                             where l.Id == Id
-                             select l).FirstOrDefault();
+                Libros? Libro = (from l in _PARCIAL1AContexto.Libros
+                                 where l.Id == Id
+                                 select l).FirstOrDefault();
 
-            //Veriquemos que exista el regsitro segun su ID
-            if (Libro == null)
-                return NotFound();
+                //Veriquemos que exista el regsitro segun su ID
+                if (Libro == null)
+                    return NotFound();
 
-            //Ejecutemos la acción de eliminar el regsitro
-            _PARCIAL1AContexto.Libros.Attach(Libro);
-            _PARCIAL1AContexto.Libros.Remove(Libro);
-            _PARCIAL1AContexto.Libros.SaveChanges();
+                //Ejecutemos la acción de eliminar el regsitro
+                _PARCIAL1AContexto.Libros.Attach(Libro);
+                _PARCIAL1AContexto.Libros.Remove(Libro);
+                _PARCIAL1AContexto.SaveChanges();
 
-            return Ok(Libro);
+                return Ok(Libro);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         [HttpDelete]
-        [Route("eliminar/{id}")]
+        [Route("EliminarAutorLibro/{Id}")]
 
         public IActionResult EliminarAutorLibro(int Id)
         {
@@ -365,13 +371,13 @@ namespace PARCIAL1A.Controllers
             //Ejecutemos la acción de eliminar el regsitro
             _PARCIAL1AContexto.AutorLibro.Attach(AutoresLi);
             _PARCIAL1AContexto.AutorLibro.Remove(AutoresLi);
-            _PARCIAL1AContexto.AutorLibro.SaveChanges();
+            _PARCIAL1AContexto.SaveChanges();
 
             return Ok(AutoresLi);
         }
 
         [HttpDelete]
-        [Route("eliminar/{id}")]
+        [Route("EliminarAutor/{Id}")]
 
         public IActionResult EliminarAutor(int Id)
         {
@@ -390,13 +396,13 @@ namespace PARCIAL1A.Controllers
             //Ejecutemos la acción de eliminar el regsitro
             _PARCIAL1AContexto.Autores.Attach(Autor);
             _PARCIAL1AContexto.Autores.Remove(Autor);
-            _PARCIAL1AContexto.Autores.SaveChanges();
+            _PARCIAL1AContexto.SaveChanges();
 
             return Ok(Autor);
         }
 
         [HttpDelete]
-        [Route("eliminar/{id}")]
+        [Route("EliminarPost/{Id}")]
 
         public IActionResult EliminarPost(int Id)
         {
@@ -415,10 +421,11 @@ namespace PARCIAL1A.Controllers
             //Ejecutemos la acción de eliminar el regsitro
             _PARCIAL1AContexto.Posts.Attach(post);
             _PARCIAL1AContexto.Posts.Remove(post);
-            _PARCIAL1AContexto.Posts.SaveChanges();
+            _PARCIAL1AContexto.SaveChanges();
 
             return Ok(post);
         }
+
 
 
         // Método para buscar Libros al ingresar el nombre del autor:
@@ -449,6 +456,9 @@ namespace PARCIAL1A.Controllers
             return Ok(listadoLibro);
         }
 
+       
+        
+        
         // Método para listar los ultimo 20 Post al ingresar el nombre de un autor.
 
         [HttpGet]
@@ -477,23 +487,31 @@ namespace PARCIAL1A.Controllers
             return Ok(listadopost);
         }
 
+       
+        
+        
+        // Método para listar los Post por libro
 
-        //Ultimo
         [HttpGet]
-        [Router("GetAll")]
+        [Route("GetPostbylibro/{LibroNombre}")]
 
-        public IActionResult Get()
+        public IActionResult GetPostbylibro(string LibroNombre)
         {
-            List<Posts> listadoPosts = (from p in _PARCIAL1AContexto.Posts
+            var listadoPosts = (from p in _PARCIAL1AContexto.Posts
+                                        join a in _PARCIAL1AContexto.Autores
+                                            on p.AutorId equals a.Id
+                                        join AL in _PARCIAL1AContexto.AutorLibro
+                                            on a.Id equals AL.AutorId
                                         join l in _PARCIAL1AContexto.Libros
-                                        on pa.Id equals l.Id
+                                            on AL.LibroId equals l.Id
+                                        where l.Titulo.Contains(LibroNombre)
                                         select new
                                         {
-                                            l.Id,
+                                            l.Titulo,
                                             p.Id,
-                                            p.Titulo,
                                             p.Contenido,
-                                            p.FechaPublicacion
+                                            p.FechaPublicacion,
+                                            a.Nombre
                                         }).ToList();
 
             if (listadoPosts.Count == 0)
