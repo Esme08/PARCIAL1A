@@ -87,6 +87,7 @@ namespace PARCIAL1A.Controllers
 
         }
 
+<<<<<<< HEAD
         //Métodos para crear registros
 
         [HttpPost]
@@ -375,5 +376,68 @@ namespace PARCIAL1A.Controllers
             return Ok(listadopost);
         }
 
+=======
+        [HttpPut]
+        [Route("actualizar/{id}")]
+
+        public IActionResult ActualizarLibros(int id, [FromBody] Libros librosModificar)
+        {
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //a la cual cambiaremos alguna propiedad
+
+            Libros? LibroActual = (from e in _PARCIAL1AContexto.Libros
+                                     where l.Id == id
+                                     select e).FirstOrDefault();
+
+            //Verificamos que exista el registro segun su ID
+            if (LibroActual == null)
+            {
+                return NotFound();
+            }
+
+            //Si se encuentra el registro, se alteran los campos modificables
+            LibroActual.nombre = librosModificar.Titulo;
+
+            //Se marca el registro como modificado en el contexto
+            //y se envia la modificacion a la BD
+
+            _PARCIAL1AContexto.Entry(LibroActual).State = EntityState.Modified;
+            _PARCIAL1AContexto.SaveChanges();
+
+            return Ok(librosModificar);
+
+        }
+
+        [HttpPut]
+        [Route("actualizar/{id}")]
+
+        public IActionResult ActualizarAutorLibro(int id, [FromBody] AutorLibro AutorLibroModificar)
+        {
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //a la cual cambiaremos alguna propiedad
+
+            AutorLibro? AutorLibroActual = (from e in _PARCIAL1AContexto.Libros
+                                   where l.Id == id
+                                   select e).FirstOrDefault();
+
+            //Verificamos que exista el registro segun su ID
+            if (LibroActual == null)
+            {
+                return NotFound();
+            }
+
+            //Si se encuentra el registro, se alteran los campos modificables
+            LibroActual.nombre = librosModificar.Titulo;
+
+            //Se marca el registro como modificado en el contexto
+            //y se envia la modificacion a la BD
+
+            _PARCIAL1AContexto.Entry(LibroActual).State = EntityState.Modified;
+            _PARCIAL1AContexto.SaveChanges();
+
+            return Ok(librosModificar);
+
+        }
+>>>>>>> Modificar registros de una tabla
     }
 }
