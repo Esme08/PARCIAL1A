@@ -319,6 +319,107 @@ namespace PARCIAL1A.Controllers
             }
         }
 
+        //Metodos para borrar
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+
+        public IActionResult EliminarLibro(int Id)
+        {
+
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //al cual eliminaremos
+
+            Libros? Libro = (from l in _PARCIAL1AContexto.Libros
+                             where l.Id == Id
+                             select l).FirstOrDefault();
+
+            //Veriquemos que exista el regsitro segun su ID
+            if (Libro == null)
+                return NotFound();
+
+            //Ejecutemos la acción de eliminar el regsitro
+            _PARCIAL1AContexto.Libros.Attach(Libro);
+            _PARCIAL1AContexto.Libros.Remove(Libro);
+            _PARCIAL1AContexto.Libros.SaveChanges();
+
+            return Ok(Libro);
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+
+        public IActionResult EliminarAutorLibro(int Id)
+        {
+
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //al cual eliminaremos
+
+            AutorLibro? AutoresLi = (from ali in _PARCIAL1AContexto.AutorLibro
+                                     where ali.AutorId == Id
+                                     select ali).FirstOrDefault();
+
+            //Veriquemos que exista el regsitro segun su ID
+            if (AutoresLi == null)
+                return NotFound();
+
+            //Ejecutemos la acción de eliminar el regsitro
+            _PARCIAL1AContexto.AutorLibro.Attach(AutoresLi);
+            _PARCIAL1AContexto.AutorLibro.Remove(AutoresLi);
+            _PARCIAL1AContexto.AutorLibro.SaveChanges();
+
+            return Ok(AutoresLi);
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+
+        public IActionResult EliminarAutor(int Id)
+        {
+
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //al cual eliminaremos
+
+            Autores? Autor = (from a in _PARCIAL1AContexto.Autores
+                              where a.Id == Id
+                              select a).FirstOrDefault();
+
+            //Veriquemos que exista el regsitro segun su ID
+            if (Autor == null)
+                return NotFound();
+
+            //Ejecutemos la acción de eliminar el regsitro
+            _PARCIAL1AContexto.Autores.Attach(Autor);
+            _PARCIAL1AContexto.Autores.Remove(Autor);
+            _PARCIAL1AContexto.Autores.SaveChanges();
+
+            return Ok(Autor);
+        }
+
+        [HttpDelete]
+        [Route("eliminar/{id}")]
+
+        public IActionResult EliminarPost(int Id)
+        {
+
+            //Para actualizar un registro, se obtiene el registro original de la BD
+            //al cual eliminaremos
+
+            Posts? post = (from p in _PARCIAL1AContexto.Posts
+                           where p.Id == Id
+                           select p).FirstOrDefault();
+
+            //Veriquemos que exista el regsitro segun su ID
+            if (post == null)
+                return NotFound();
+
+            //Ejecutemos la acción de eliminar el regsitro
+            _PARCIAL1AContexto.Posts.Attach(post);
+            _PARCIAL1AContexto.Posts.Remove(post);
+            _PARCIAL1AContexto.Posts.SaveChanges();
+
+            return Ok(post);
+        }
+
 
         // Método para buscar Libros al ingresar el nombre del autor:
 
@@ -376,68 +477,30 @@ namespace PARCIAL1A.Controllers
             return Ok(listadopost);
         }
 
-=======
-        [HttpPut]
-        [Route("actualizar/{id}")]
 
-        public IActionResult ActualizarLibros(int id, [FromBody] Libros librosModificar)
+        //Ultimo
+        [HttpGet]
+        [Router("GetAll")]
+
+        public IActionResult Get()
         {
-            //Para actualizar un registro, se obtiene el registro original de la BD
-            //a la cual cambiaremos alguna propiedad
+            List<Posts> listadoPosts = (from p in _PARCIAL1AContexto.Posts
+                                        join l in _PARCIAL1AContexto.Libros
+                                        on pa.Id equals l.Id
+                                        select new
+                                        {
+                                            l.Id,
+                                            p.Id,
+                                            p.Titulo,
+                                            p.Contenido,
+                                            p.FechaPublicacion
+                                        }).ToList();
 
-            Libros? LibroActual = (from e in _PARCIAL1AContexto.Libros
-                                     where l.Id == id
-                                     select e).FirstOrDefault();
-
-            //Verificamos que exista el registro segun su ID
-            if (LibroActual == null)
+            if (listadoPosts.Count == 0)
             {
                 return NotFound();
             }
-
-            //Si se encuentra el registro, se alteran los campos modificables
-            LibroActual.nombre = librosModificar.Titulo;
-
-            //Se marca el registro como modificado en el contexto
-            //y se envia la modificacion a la BD
-
-            _PARCIAL1AContexto.Entry(LibroActual).State = EntityState.Modified;
-            _PARCIAL1AContexto.SaveChanges();
-
-            return Ok(librosModificar);
-
+            return Ok(listadoPosts);
         }
-
-        [HttpPut]
-        [Route("actualizar/{id}")]
-
-        public IActionResult ActualizarAutorLibro(int id, [FromBody] AutorLibro AutorLibroModificar)
-        {
-            //Para actualizar un registro, se obtiene el registro original de la BD
-            //a la cual cambiaremos alguna propiedad
-
-            AutorLibro? AutorLibroActual = (from e in _PARCIAL1AContexto.Libros
-                                   where l.Id == id
-                                   select e).FirstOrDefault();
-
-            //Verificamos que exista el registro segun su ID
-            if (LibroActual == null)
-            {
-                return NotFound();
-            }
-
-            //Si se encuentra el registro, se alteran los campos modificables
-            LibroActual.nombre = librosModificar.Titulo;
-
-            //Se marca el registro como modificado en el contexto
-            //y se envia la modificacion a la BD
-
-            _PARCIAL1AContexto.Entry(LibroActual).State = EntityState.Modified;
-            _PARCIAL1AContexto.SaveChanges();
-
-            return Ok(librosModificar);
-
-        }
->>>>>>> Modificar registros de una tabla
     }
 }
