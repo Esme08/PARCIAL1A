@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using PARCIAL1A.Models;
 
 namespace PARCIAL1A.Controllers
 {
@@ -8,6 +7,6 @@ namespace PARCIAL1A.Controllers
     [ApiController]
     public class PARCIAL1AController : ControllerBase
     {
-       
+
     }
 }
